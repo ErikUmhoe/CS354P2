@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Main File:        (name of file with main function)
-// This File:        (name of this file)
-// Other Files:      (name of all other files if any)
+// Main File:        Check_queens.c
+// This File:        check_queens.c
+// Other Files:      Check2.txt, check3.txt, check4.txt
 // Semester:         CS 354 Fall 2018
 //
-// Author:           (your name)
-// Email:            (your wisc email address)
-// CS Login:         (your CS login name)
+// Author:           Erik Umhoefer
+// Email:            ejumhoefer@wisc.edu
+// CS Login:         umhoefer
 //
 /////////////////////////// OTHER SOURCES OF HELP //////////////////////////////
 //                   fully acknowledge and credit all sources of help,
@@ -61,16 +61,52 @@ void get_dimensions(FILE *fp, int *rows, int *cols) {
  * cols: number of columns
  */
 int check_queens(int **board, int rows, int cols) {           
-	for(int i = 0; i < rows; i++)
+	int canAttack = 0;
+
+	//Navigates through each element of the 2D array
+	for(int row = 0; row < rows; row++)
 	{
-		for(int j = 0; j < cols; j++)
-		{
-			if(*(*(board+i)+j) == 1)
-				printf("Row %d Col %d", i, j);	
+		for(int col = 0; col < cols; col++)
+		{	
+
+			//Found a queen, compare to other elements
+			if( *(*(board+row) + col) == 1)
+			{
+
+				//Checks for a match horizontal to the current element
+				 for(int i = row, j = 0; j < cols; j++)
+				 {
+				 	//If element is a new queen horizontal to the previous queen, return 1
+				 	if(j != col && *(*(board+i)+j) == 1)
+				 	{
+				 		return 1;
+				 	}
+				 }
+
+				 //Check for a match vertical to the current element
+				 for(int i = 0, j = col; i < rows; i++)
+				 {
+				 	//If element is a new queen vertical to the previous queen, return 1
+				 	if(i != row && *(*(board+i)+j) == 1)
+				 	{
+				 		return 1;
+				 	}
+				 		
+				 }
+
+				 //Check for a match diagonal to the current element
+				 for(int i = row, j = col; i < rows && j < cols; i++,j++)
+				 {
+				 	//If element is a new queen diagonal to the previous queen, return 1
+				 	if(i != row && j != col && *(*(board+i)+j) == 1)
+				 		return 1;
+				 }
+			}
+			
 		}
 	}
 
-	return 0;
+	return canAttack;
 }     
 
 
@@ -84,7 +120,8 @@ int check_queens(int **board, int rows, int cols) {
 int main(int argc, char *argv[]) {                
 
         //TODO: Check if number of command-line arguments is correct.
-		
+	if(argc != 2)
+		printf("Usage: ./check_queens <input_filename>\n");
 
 	//Open the file and check if it opened successfully.
 	FILE *fp = fopen(*(argv + 1), "r");
@@ -99,10 +136,18 @@ int main(int argc, char *argv[]) {
 
 
         //TODO: Call get_dimensions to retrieve the board dimensions.
-        get_dimensions(fp, rows, cols);
+        get_dimensions(fp, &rows, &cols);
+
 
         //TODO: Dynamically allocate a 2D array of dimensions retrieved above.
-		int[][] board = new int[rows][cols];
+		int **board;
+		board = malloc(sizeof(int *) * rows);
+		for(int x = 0; x < rows; x++)
+		{
+			board[x] = malloc(sizeof(int) * cols);
+		}
+
+
 
 	//Read the file line by line.
 	//Tokenize each line wrt comma to store the values in your 2D array.
@@ -117,19 +162,41 @@ int main(int argc, char *argv[]) {
 		}
 
 		token = strtok(line, COMMA);
+
 		for (int j = 0; j < cols; j++) {
 			//TODO: Complete the line of code below
                         //to initialize your 2D array.
-			*(*board + i) + j = atoi(token);
-			token = strtok(NULL, COMMA);	
+			*(*(board+i) + j) = atoi(token);	//FIX ME!!!!!!!!!!
+			token = strtok(NULL, COMMA);
+
 		}
+
 	}
+
+
+	//Test printing
+	// for(int i = 0; i < rows; i++)
+	// 	{
+	// 		for(int j = 0; j < cols; j++)
+	// 			printf("%d, ", *(*(board+i) + j));
+	// 		printf("\n");
+	// 	}
 
 	//TODO: Call the function check_queens and print the appropriate
         //output depending on the function's return value.
-
+       if(check_queens(board, rows, cols) == 1)
+       {
+       		printf("True\n");
+       }
+       else
+       	printf("False\n");
+	
+        
 	//TODO: Free all dynamically allocated memory.
-
+    for(int i = 0; i < rows; i++)
+    	free(*(board+i));
+    free(board);
+    board = NULL;
 
 	//Close the file.
 	if (fclose(fp) != 0) {
