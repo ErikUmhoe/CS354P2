@@ -101,6 +101,12 @@ int check_queens(int **board, int rows, int cols) {
 				 	if(i != row && j != col && *(*(board+i)+j) == 1)
 				 		return 1;
 				 }
+				 for(int i = row, j = col; i < rows && j < cols; i++,j--)
+				 {
+				 	//If element is a new queen diagonal to the previous queen, return 1
+				 	if(i != row && j != col && *(*(board+i)+j) == 1)
+				 		return 1;
+				 }
 			}
 			
 		}
