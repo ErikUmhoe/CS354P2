@@ -114,7 +114,7 @@ int check_queens(int **board, int rows, int cols) {
 		}
 	}
 
-	return canAttack;
+	return canAttack; //1 if a pair of queens were found to attack each other, otherwise 0
 }     
 
 
@@ -128,6 +128,7 @@ int check_queens(int **board, int rows, int cols) {
 int main(int argc, char *argv[]) {                
 
  	//Check if number of command-line arguments is correct.
+ 	//If not, print an error message and exit. 
 	if(argc != 2)
 	{
 		printf("Usage: ./check_queens <input_filename>\n");
@@ -143,6 +144,7 @@ int main(int argc, char *argv[]) {
 
 
         //Declare local variables.
+		//Rows is the number of rows in the board, cols is the number of columns in the board
         int rows, cols;
 
 
@@ -160,7 +162,7 @@ int main(int argc, char *argv[]) {
 		}
 		for(int x = 0; x < rows; x++)
 		{
-			board[x] = malloc(sizeof(int) * cols);
+			board[x] = malloc(sizeof(int) * cols); //Allocating 2D array of arrays
 			if(board[x] == NULL)	//Malloc did not allocate memory correctly
 			{
 				printf("Board Memory Allocation Error; Exiting\n");
@@ -185,9 +187,9 @@ int main(int argc, char *argv[]) {
 		token = strtok(line, COMMA);
 
 		for (int j = 0; j < cols; j++) {
-			//TODO: Complete the line of code below
-                        //to initialize your 2D array.
-			*(*(board+i) + j) = atoi(token);	//FIX ME!!!!!!!!!!
+            
+            //initialize 2D Array with address arithmetic
+			*(*(board+i) + j) = atoi(token);	
 			token = strtok(NULL, COMMA);
 
 		}
