@@ -18,6 +18,8 @@
 // Online sources:   avoid web searches to solve your problems, but if you do
 //                   search, be sure to include Web URLs and description of 
 //                   of any information you find.
+//					https://en.cppreference.com/w/c/memory/malloc
+//					https://www.tutorialspoint.com/cprogramming/c_error_handling.htm
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h> 
@@ -125,9 +127,12 @@ int check_queens(int **board, int rows, int cols) {
  */
 int main(int argc, char *argv[]) {                
 
-        //TODO: Check if number of command-line arguments is correct.
+ 	//Check if number of command-line arguments is correct.
 	if(argc != 2)
+	{
 		printf("Usage: ./check_queens <input_filename>\n");
+		exit(1);
+	}
 
 	//Open the file and check if it opened successfully.
 	FILE *fp = fopen(*(argv + 1), "r");
@@ -141,16 +146,26 @@ int main(int argc, char *argv[]) {
         int rows, cols;
 
 
-        //TODO: Call get_dimensions to retrieve the board dimensions.
+        //Call get_dimensions to retrieve the board dimensions.
         get_dimensions(fp, &rows, &cols);
 
 
-        //TODO: Dynamically allocate a 2D array of dimensions retrieved above.
+        //Dynamically allocate a 2D array of dimensions retrieved above.
 		int **board;
 		board = malloc(sizeof(int *) * rows);
+		if(board == NULL)	//Malloc did not allocate memory correctly
+		{
+			printf("Board Memory Allocation Error; Exiting\n");
+			exit(1);
+		}
 		for(int x = 0; x < rows; x++)
 		{
 			board[x] = malloc(sizeof(int) * cols);
+			if(board[x] == NULL)	//Malloc did not allocate memory correctly
+			{
+				printf("Board Memory Allocation Error; Exiting\n");
+				exit(1);
+			}
 		}
 
 
@@ -180,25 +195,18 @@ int main(int argc, char *argv[]) {
 	}
 
 
-	//Test printing
-	// for(int i = 0; i < rows; i++)
-	// 	{
-	// 		for(int j = 0; j < cols; j++)
-	// 			printf("%d, ", *(*(board+i) + j));
-	// 		printf("\n");
-	// 	}
 
-	//TODO: Call the function check_queens and print the appropriate
+	//Call the function check_queens and print the appropriate
         //output depending on the function's return value.
        if(check_queens(board, rows, cols) == 1)
        {
-       		printf("True\n");
+       		printf("True\n"); //Exists a pair of queens that can attack, print true
        }
        else
-       	printf("False\n");
+       	printf("False\n");	//No pair of queens that can attack, print false
 	
         
-	//TODO: Free all dynamically allocated memory.
+	//Free all dynamically allocated memory.
     for(int i = 0; i < rows; i++)
     	free(*(board+i));
     free(board);
